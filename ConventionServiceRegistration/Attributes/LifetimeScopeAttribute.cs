@@ -1,7 +1,7 @@
 ﻿namespace ConventionServiceRegistration.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    public class LifetimeScopeAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public sealed class LifetimeScopeAttribute : Attribute
     { 
         public InstanceLifetime InstanceLifetime { get; init; }
 

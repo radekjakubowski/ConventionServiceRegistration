@@ -1,4 +1,5 @@
 ﻿using ConventionServiceRegistration.Attributes;
+using Microsoft.Extensions.Options;
 using System.Reflection;
 
 namespace ConventionServiceRegistration.Extensions
@@ -8,8 +9,8 @@ namespace ConventionServiceRegistration.Extensions
         public static void RegisterServicesWithAttributes(this IServiceCollection services)
         {
             var servicesWithScopes = Assembly.GetExecutingAssembly().GetTypes()
-                                    .Where(IsMarkedWithLifetimeInstanceAndImplementsRegularInterface)
-                                    .Select(type => (type, interfaceType: type.GetInterface($"I{type.Name}"), scope: type.GetCustomAttribute<LifetimeScopeAttribute>()!.InstanceLifetime));
+                                        .Where(IsMarkedWithLifetimeInstanceAndImplementsRegularInterface)
+                                        .Select(type => (type, interfaceType: type.GetInterface($"I{type.Name}"), scope: type.GetCustomAttribute<LifetimeScopeAttribute>()!.InstanceLifetime));
 
             foreach (var registration in servicesWithScopes)
             {

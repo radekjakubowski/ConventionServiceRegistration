@@ -1,10 +1,15 @@
+using ConventionServiceRegistration.Configurations;
 using ConventionServiceRegistration.Extensions;
 using ConventionServiceRegistration.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+var configuration = builder.Configuration;
+
+builder.BindConfigurationsWithAttributes();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.RegisterServicesWithAttributes();
@@ -20,12 +25,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/weatherforecast", (IServiceOne serviceOne, IServiceTwo serviceTwo) =>
+app.MapGet("/get", ([FromServices] IServiceOne serviceOne, [FromServices] IServiceTwo serviceTwo, [FromServices]  IServiceThree serviceThree) =>
 {
     var serviceOneMessage = serviceOne.GetMessage();
     var serviceTwoMessage = serviceTwo.GetMessage();
+    var serviceThreeMessage = serviceThree.GetMessage();
 
-    var messages = new string[] { serviceOneMessage, serviceTwoMessage };
+    var messages = new string[] { serviceOneMessage, serviceTwoMessage, serviceThreeMessage };
 
     return messages;
 })
