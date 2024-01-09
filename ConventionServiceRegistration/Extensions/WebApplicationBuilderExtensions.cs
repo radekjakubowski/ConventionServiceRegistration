@@ -6,26 +6,33 @@ namespace ConventionServiceRegistration.Extensions
 {
     public static class WebApplicationBuilderExtensions
     {
-        public static void BindConfigurationsWithAttributes(this WebApplicationBuilder builder, string classPostfix = "Config")
+        public static void BindConfigurationsWithAttributes(this WebApplicationBuilder builder)
         {
             builder.Services.AddOptions();
 
-            var configClasses = Assembly.GetExecutingAssembly().GetTypes()
-                                    .Where(_ => _.GetCustomAttributes().Any(_ => _ is SelfBindableConfigurationAttribute));
+            var configClasses = Assembly.GetExecutingAssembly()
+                                        .GetTypes()
+                                        .Where(IsMarkedAsSelfBindableConfiguration);
 
             foreach (var configClass in configClasses)
             {
-                var configSectionName = configClass.Name.Split(classPostfix)[0]; // Get the name of the configuration class
+                var configSectionName = configClass.GetCustomAttribute<SelfBindableConfigurationAttribute>()!.JsonKey;
                 var settingsTypeInstance = Activator.CreateInstance(configClass);
                 var optionsType = typeof(IOptions<>).MakeGenericType(configClass);
 
-                builder.Configuration.GetSection(configSectionName).Bind(settingsTypeInstance);
+                var configSection = builder.Configuration.GetSection(configSectionName);
+                configSection.Bind(settingsTypeInstance);
 
                 // Create an instance of Options<T> passing the settings instance to its constructor
-                var optionsInstanceType = typeof(Options).GetMethod("Create").MakeGenericMethod(configClass);
-                var optionsInstance = optionsInstanceType.Invoke(null, new object[] { settingsTypeInstance });
+                var optionsInstanceType = typeof(Options).GetMethod("Create")?.MakeGenericMethod(configClass);
+                var optionsInstance = optionsInstanceType?.Invoke(null, new object[] { settingsTypeInstance! });
 
-                builder.Services.AddSingleton(optionsType, optionsInstance);
+                builder.Services.AddSingleton(optionsType, optionsInstance!);
+            }
+
+            static bool IsMarkedAsSelfBindableConfiguration(Type configType)
+            {
+                return configType.GetCustomAttributes().Any(_ => _ is SelfBindableConfigurationAttribute);
             }
         }
     }

@@ -1,8 +1,9 @@
 ﻿using ConventionServiceRegistration.Attributes;
+using ConventionServiceRegistration.Services;
 
 namespace ConventionServiceRegistration.Configurations
 {
-    [SelfBindableConfiguration]
+    [SelfBindableConfiguration(jsonKey: nameof(ServiceOne))]
     public class ServiceOneConfig
     {
         public string Message { get; init; }
