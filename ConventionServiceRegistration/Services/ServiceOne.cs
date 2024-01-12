@@ -10,9 +10,9 @@ namespace ConventionServiceRegistration.Services
     public class ServiceOne : IServiceOne
     {
         private readonly Guid _creationId;
-        private readonly IOptions<ServiceOneConfig> _options;
+        private readonly IOptions<Configurations.ServiceOne> _options;
 
-        public ServiceOne(IOptions<ServiceOneConfig> options)
+        public ServiceOne(IOptions<Configurations.ServiceOne> options)
         {
             _options = options;
             _creationId = Guid.NewGuid();

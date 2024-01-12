@@ -9,9 +9,9 @@ namespace ConventionServiceRegistration.Services
     public class ServiceTwo : IServiceTwo
     {
         private readonly Guid _creationId;
-        private readonly IOptions<ServiceTwoConfig> _options;
+        private readonly IOptions<Configurations.ServiceTwo> _options;
 
-        public ServiceTwo(IOptions<ServiceTwoConfig> options)
+        public ServiceTwo(IOptions<Configurations.ServiceTwo> options)
         {
             _options = options;
             _creationId = Guid.NewGuid();
